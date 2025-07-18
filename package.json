@@ -1,108 +1,280 @@
 {
-    "name": "vscode-autohide",
-    "displayName": "Auto Hide",
-    "description": "A tool to autohide the sidebar and terminal panel.",
-    "version": "1.0.10",
-    "publisher": "sirmspencer",
-    "repository": {
-        "url": "https://github.com/sirmspencer/vscode-autohide"
-    },
-    "icon": "Images/Icons/Logo_128.png",
-    "engines": {
-        "vscode": "^1.43.0"
-    },
-    "extensionKind": [
-        "ui",
-        "workspace"
-    ],
-    "categories": [
-        "Other"
-    ],
-    "keywords": [
-        "terminal",
-        "panel",
-        "side",
-        "bar",
-        "hide",
-        "auto",
-        "sidebar"
-    ],
-    "activationEvents": [
-        "*"
-    ],
-    "main": "./out/src/extension",
-    "contributes": {
-        "configuration": {
-            "type": "object",
-            "title": "Auto Hide configuration",
-            "properties": {
-                "autoHide.autoHideSideBar": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide the side bar when the user clicks into a text editor."
-                },
-                "autoHide.autoHideAuxiliaryBar": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide the auxiliary bar (second side bar) when the user clicks into a text editor."
-                },
-                "autoHide.autoHidePanel": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide the panel (output, terminal, etc.) when the user clicks into a text editor."
-                },
-                "autoHide.autoHideReferences": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Hide the References panel (`Go to References`) when the user clicks into a text editor."
-                },
-                "autoHide.sideBarDelay": {
-                    "type": "number",
-                    "default": 450,
-                    "description": "How long to wait before hiding the side bar. A delay prevents text from being selected. A longer delay allows the horizontal scroll to adjust to the change in selection before the side bar hiding causes the horizontal scroll to adjust, avoiding conflicts."
-                },
-                "autoHide.panelDelay": {
-                    "type": "number",
-                    "default": 300,
-                    "description": "How long to wait before hiding the panel. Same as for the side bar when the panel is on the side.  If the panel is on the bottom, there is no need for delay."
-                },
-                "autoHide.hideOnOpen": {
-                    "type": "boolean",
-                    "default": false,
-                    "description": "Hide side bar and panel when VSCode first opens."
-                }
-            }
+  "name": "vscode-autohide-enhanced",
+  "displayName": "Auto Hide Enhanced",
+  "description": "Advanced auto-hide functionality for VSCode sidebars, panels, and auxiliary bars with smart context awareness.",
+  "version": "2.0.0",
+  "publisher": "your-publisher-name",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/vscode-autohide-enhanced"
+  },
+  "bugs": {
+    "url": "https://github.com/your-username/vscode-autohide-enhanced/issues"
+  },
+  "homepage": "https://github.com/your-username/vscode-autohide-enhanced#readme",
+  "icon": "Images/Icons/Logo_128.png",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "categories": [
+    "Other",
+    "Productivity"
+  ],
+  "keywords": [
+    "terminal",
+    "panel",
+    "sidebar",
+    "auxiliary bar",
+    "hide",
+    "auto",
+    "productivity",
+    "copilot",
+    "debug",
+    "smart"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "type": "object",
+      "title": "Auto Hide Enhanced",
+      "properties": {
+        "autoHideEnhanced.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable/disable the Auto Hide Enhanced extension globally.",
+          "scope": "application"
         },
-        "commands": [
-            {
-                "command": "autoHide.toggleHideSideBar",
-                "category": "Auto Hide",
-                "title": "Toggle Auto Hide Side Bar for Current Workspace"
-            },
-            {
-                "command": "autoHide.toggleHideAuxiliaryBar",
-                "category": "Auto Hide",
-                "title": "Toggle Auto Hide Auxiliary Bar for Current Workspace"
-            },
-            {
-                "command": "autoHide.toggleHidePanel",
-                "category": "Auto Hide",
-                "title": "Toggle Auto Hide Panel for Current Workspace"
-            }
-        ]
+        "autoHideEnhanced.sidebar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-hide the primary sidebar when clicking in text editors."
+        },
+        "autoHideEnhanced.sidebar.delay": {
+          "type": "number",
+          "default": 450,
+          "minimum": 0,
+          "maximum": 5000,
+          "description": "Delay in milliseconds before hiding the sidebar."
+        },
+        "autoHideEnhanced.auxiliaryBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-hide the auxiliary bar (secondary sidebar) when clicking in text editors."
+        },
+        "autoHideEnhanced.auxiliaryBar.delay": {
+          "type": "number",
+          "default": 450,
+          "minimum": 0,
+          "maximum": 5000,
+          "description": "Delay in milliseconds before hiding the auxiliary bar."
+        },
+        "autoHideEnhanced.panel.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-hide the bottom panel (terminal, output, etc.) when clicking in text editors."
+        },
+        "autoHideEnhanced.panel.delay": {
+          "type": "number",
+          "default": 300,
+          "minimum": 0,
+          "maximum": 5000,
+          "description": "Delay in milliseconds before hiding the panel."
+        },
+        "autoHideEnhanced.references.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Auto-hide the references panel when clicking in text editors."
+        },
+        "autoHideEnhanced.copilotChat.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-hide GitHub Copilot Chat panel when clicking in text editors."
+        },
+        "autoHideEnhanced.copilotChat.delay": {
+          "type": "number",
+          "default": 500,
+          "minimum": 0,
+          "maximum": 5000,
+          "description": "Delay in milliseconds before hiding Copilot Chat panel."
+        },
+        "autoHideEnhanced.smart.respectDebugSessions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Don't auto-hide panels during active debug sessions.",
+          "scope": "application"
+        },
+        "autoHideEnhanced.smart.respectTextSelection": {
+          "type": "boolean",
+          "default": true,
+          "description": "Don't auto-hide when user is actively selecting text.",
+          "scope": "application"
+        },
+        "autoHideEnhanced.smart.excludedSchemes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "output",
+            "debug",
+            "search-result"
+          ],
+          "description": "URI schemes where auto-hide should be disabled."
+        },
+        "autoHideEnhanced.hideOnStartup": {
+          "type": "boolean",
+          "default": false,
+          "description": "Hide all configured panels when VSCode starts."
+        },
+        "autoHideEnhanced.statusBar.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show status bar indicator with toggle controls.",
+          "scope": "application"
+        },
+        "autoHideEnhanced.statusBar.showCounts": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show count of hidden panels in status bar.",
+          "scope": "application"
+        }
+      }
     },
-    "scripts": {
-        "compile": "tsc -watch -p ./",
-        "#test": "node ./node_modules/vscode/bin/test",
-        "vscode:prepublish": "tsc -p ./",
-        "#postinstall": "node ./node_modules/vscode/bin/install",
-        "publish": "vsce publish"
-    },
-    "devDependencies": {
-        "@types/mocha": "^2.2.32",
-        "@types/node": "^6.0.40",
-        "mocha": "^7.2.0",
-        "typescript": "^2.9.2",
-        "vscode": "^1.1.36"
+    "commands": [
+      {
+        "command": "autoHideEnhanced.toggle.sidebar",
+        "title": "Toggle Auto Hide: Sidebar",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.toggle.auxiliaryBar",
+        "title": "Toggle Auto Hide: Auxiliary Bar",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.toggle.panel",
+        "title": "Toggle Auto Hide: Panel",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.toggle.references",
+        "title": "Toggle Auto Hide: References",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.toggle.copilotChat",
+        "title": "Toggle Auto Hide: Copilot Chat",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.toggle.all",
+        "title": "Toggle Auto Hide: All Panels",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.show.all",
+        "title": "Show All Hidden Panels",
+        "category": "Auto Hide Enhanced"
+      },
+      {
+        "command": "autoHideEnhanced.hide.all",
+        "title": "Hide All Configured Panels",
+        "category": "Auto Hide Enhanced"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "autoHideEnhanced.toggle.all",
+        "key": "ctrl+shift+h",
+        "mac": "cmd+shift+h",
+        "when": "editorTextFocus"
+      },
+      {
+        "command": "autoHideEnhanced.show.all",
+        "key": "ctrl+shift+s",
+        "mac": "cmd+shift+s",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "autoHideEnhanced.toggle.sidebar"
+        },
+        {
+          "command": "autoHideEnhanced.toggle.auxiliaryBar"
+        },
+        {
+          "command": "autoHideEnhanced.toggle.panel"
+        },
+        {
+          "command": "autoHideEnhanced.toggle.references"
+        },
+        {
+          "command": "autoHideEnhanced.toggle.copilotChat"
+        },
+        {
+          "command": "autoHideEnhanced.toggle.all"
+        },
+        {
+          "command": "autoHideEnhanced.show.all"
+        },
+        {
+          "command": "autoHideEnhanced.hide.all"
+        }
+      ]
     }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "npm run build",
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node16 --sourcemap",
+    "build:watch": "npm run build -- --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src --ext ts",
+    "lint:fix": "eslint src --ext ts --fix",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "format:check": "prettier --check \"src/**/*.ts\"",
+    "clean": "rimraf dist out",
+    "package": "vsce package",
+    "publish:vsce": "vsce publish",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@types/node": "^20.9.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.21.0",
+    "@typescript-eslint/parser": "^6.21.0",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.3.6",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.19.5",
+    "eslint": "^8.53.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.5.1",
+    "jest": "^29.7.0",
+    "ovsx": "^0.8.3",
+    "prettier": "^3.1.0",
+    "rimraf": "^5.0.5",
+    "ts-jest": "^29.1.1",
+    "typescript": "^5.2.2"
+  },
+  "extensionDependencies": [],
+  "badges": [
+    {
+      "url": "https://img.shields.io/visual-studio-marketplace/v/your-publisher-name.vscode-autohide-enhanced",
+      "href": "https://marketplace.visualstudio.com/items?itemName=your-publisher-name.vscode-autohide-enhanced",
+      "description": "Visual Studio Marketplace Version"
+    }
+  ]
 }

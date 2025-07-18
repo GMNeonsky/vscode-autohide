@@ -1,9 +1,14 @@
-// Place your settings in this file to overwrite default and user settings.
 {
-    "files.exclude": {
-        "out": false // set this to true to hide the "out" folder with the compiled JS files
-    },
-    "search.exclude": {
-        "out": true // set this to false to include "out" folder in search results
-    }
+  "autoHide.enabled": true,
+  "autoHide.sidebar.enabled": true,
+  "autoHide.sidebar.delay": 1000,
+  "autoHide.panel.enabled": true,
+  "autoHide.panel.delay": 1000,
+  "autoHide.auxiliaryBar.enabled": false,
+  "autoHide.references.enabled": false,
+  "autoHide.copilotChat.enabled": false,
+  "autoHide.showOnHover": true,
+  "autoHide.hoverDelay": 300,
+  "autoHide.contextAware": true,
+  "autoHide.hideOnStartup": false
 }

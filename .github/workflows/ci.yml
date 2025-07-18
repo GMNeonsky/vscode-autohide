@@ -1,0 +1,154 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x]
+        vscode-version: ['1.85.0', 'stable']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run linting
+      run: npm run lint
+    
+    - name: Run type checking
+      run: npm run type-check
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Build extension
+      run: npm run build
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.node-version }}-${{ matrix.vscode-version }}
+        path: |
+          coverage/
+          test-results.xml
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'release'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build extension
+      run: npm run build
+    
+    - name: Install vsce
+      run: npm install -g @vscode/vsce
+    
+    - name: Package extension
+      run: vsce package --out vscode-autohide-enhanced.vsix
+    
+    - name: Upload VSIX artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: vscode-autohide-enhanced-vsix
+        path: vscode-autohide-enhanced.vsix
+
+  publish:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Build extension
+      run: npm run build
+    
+    - name: Install vsce and ovsx
+      run: |
+        npm install -g @vscode/vsce
+        npm install -g ovsx
+    
+    - name: Package extension
+      run: vsce package --out vscode-autohide-enhanced.vsix
+    
+    - name: Publish to VS Code Marketplace
+      env:
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
+      run: vsce publish --packagePath vscode-autohide-enhanced.vsix
+    
+    - name: Publish to Open VSX Registry
+      env:
+        OVSX_PAT: ${{ secrets.OVSX_PAT }}
+      run: ovsx publish vscode-autohide-enhanced.vsix -p $OVSX_PAT
+    
+    - name: Upload release asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./vscode-autohide-enhanced.vsix
+        asset_name: vscode-autohide-enhanced.vsix
+        asset_content_type: application/zip
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run security audit
+      run: npm audit --audit-level moderate
+    
+    - name: Check for vulnerabilities
+      run: npm audit --audit-level high --production
